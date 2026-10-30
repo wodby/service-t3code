@@ -1,0 +1,149 @@
+name: t3code
+icon: t3code
+type: service
+title: T3 Code
+guidance: GUIDANCE.md
+# T3 Code keeps its state in a single SQLite database on the volume.
+scalable: false
+
+options:
+- version: '0'
+  tag: 0-r1
+  default: true
+
+labels:
+- t3code
+
+deployment:
+  strategy: rolling
+  shutdownGracePeriod: 60s
+
+endpoints:
+- name: t3code
+  ports:
+  - name: http
+    number: 3773
+    protocol: http
+    main: true
+    routeDefaults:
+      https_redirect: 'true'
+      # Attachments are limited to 50 MiB by T3 Code.
+      request_body_size: 64Mi
+      # Agent turns stream over a long-lived WebSocket.
+      request_timeout: 0s
+      backend_request_timeout: 0s
+
+env:
+- name: T3CODE_TELEMETRY_ENABLED
+  value: 'false'
+
+actions:
+- name: pairing_link
+  title: Generate pairing link
+  type: button
+  args:
+  - t3-pairing-link
+
+volumes:
+- name: data
+  title: Data
+  size: 20
+  helm:
+    labels: persistence.labels
+    values:
+    - name: persistence.enabled
+      value: true
+    - name: persistence.size
+      value: '{{volumes.data.size}}Gi'
+    - name: persistence.storageClass
+      value: '{{volumes.data.storageClassName}}'
+
+helm:
+  name: wodby
+  source: oci://registry-1.docker.io/wodby/stateful
+  chart: oci://registry-1.docker.io/wodby/stateful
+  version: 0.2.0
+  valueMappings:
+    replicas: replicaCount
+    serviceAccountName: serviceAccount.name
+    serviceAccountCreate: serviceAccount.create
+  values:
+  - name: containerName
+    value: t3code
+  - name: containerPorts
+    value:
+    - name: http
+      containerPort: 3773
+      protocol: TCP
+  - name: podSecurityContext
+    value:
+      fsGroup: 1000
+      fsGroupChangePolicy: OnRootMismatch
+  - name: securityContext
+    value:
+      allowPrivilegeEscalation: false
+      # OpenCode crashes when started from a web terminal under the stacked AppArmor profile of
+      # some Kubernetes nodes. T3 Code runs user-directed agents, so it gains nothing from it.
+      appArmorProfile:
+        type: Unconfined
+      capabilities:
+        drop:
+        - ALL
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+  - name: startupProbe
+    value:
+      httpGet:
+        path: /.well-known/t3/environment
+        port: http
+      failureThreshold: 60
+      periodSeconds: 5
+      timeoutSeconds: 5
+  - name: readinessProbe
+    value:
+      httpGet:
+        path: /.well-known/t3/environment
+        port: http
+      failureThreshold: 6
+      periodSeconds: 10
+      timeoutSeconds: 5
+  - name: livenessProbe
+    value:
+      httpGet:
+        path: /.well-known/t3/environment
+        port: http
+      failureThreshold: 6
+      periodSeconds: 10
+      timeoutSeconds: 5
+
+workloads:
+- name: main
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: '{{helm.release}}'
+  kind: statefulset
+  primary: true
+  helm:
+    labels: commonLabels
+    annotations: commonAnnotations
+    volumes: extraVolumes
+  containers:
+  - name: t3code
+    image: wodby/t3code
+    resources:
+      request:
+        cpu: 500
+        memory: 1024
+      limit:
+        cpu: 4000
+        memory: 8192
+    helm:
+      resources: resources
+      env: envVars
+      mounts: extraVolumeMounts
+      image:
+        repository: image.repository
+        tag: image.tag
+        registry: image.registry
+        pullPolicy: image.pullPolicy
