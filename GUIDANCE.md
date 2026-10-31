@@ -19,6 +19,8 @@ The link uses `WODBY_PRIMARY_URL`, so it points at the environment's main domain
 
 New threads use **Full access**, T3 Code's default, where agents act without approval prompts and the container is the boundary. Codex's **Supervised** and **Auto** modes run commands in a sandbox that needs unprivileged user namespaces. If the cluster's seccomp or kernel settings block them, those commands fail with a `bwrap` error: use **Full access** for that thread.
 
+T3 Code's built-in browser downloads itself to the volume on first use and uses the same namespaces for Chrome's sandbox. If a browser tab reports that the host blocks the sandbox, `t3 browser setup` can't help inside the container. Setting `T3CODE_SERVER_BROWSER_SANDBOX=0` runs the browser without Chrome's sandbox, so a compromised web page could then reach everything in the container.
+
 ## Data
 
 The `data` volume is mounted at `/data`, the home directory of the `node` user (uid 1000). It holds T3 Code's database (`~/.t3`), agent logins, Git credentials and `~/projects`, the default working directory. Everything outside `/data` resets when the container restarts. Tools installed with `npm install -g` or into `~/.local/bin` stay on the volume and take priority over the image's.
