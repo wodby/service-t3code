@@ -8,7 +8,7 @@ scalable: false
 
 options:
 - version: '0'
-  tag: 0-r1
+  tag: 0-r2
   default: true
 
 labels:
@@ -34,6 +34,10 @@ endpoints:
       backend_request_timeout: 0s
 
 env:
+# Kubernetes sets T3CODE_PORT=tcp://<address>:3773 for a Service named t3code, which T3 Code reads as its
+# port and refuses. A variable set on the container takes priority over that, and exec commands inherit it.
+- name: T3CODE_PORT
+  value: '3773'
 - name: T3CODE_TELEMETRY_ENABLED
   value: 'false'
 

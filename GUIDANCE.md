@@ -30,7 +30,7 @@ Run one replica only: the database is a single SQLite file.
 ## Changing configuration
 
 - `T3CODE_TELEMETRY_ENABLED` is `false` on this service. Set it to `true` to send T3 Code's product usage data.
-- Other `T3CODE_*` variables are read by T3 Code. Keep `T3CODE_HOST` and `T3CODE_PORT` as they are: the endpoint and probes expect port 3773.
+- Other `T3CODE_*` variables are read by T3 Code. Keep `T3CODE_HOST` as it is, and keep `T3CODE_PORT` set to `3773`: the endpoint and probes expect that port, and without the variable Kubernetes supplies its own `T3CODE_PORT` value, which stops the server from starting.
 
 Change environment variables on the service, then deploy it.
 
