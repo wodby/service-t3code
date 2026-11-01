@@ -9,7 +9,7 @@ T3 Code has no password. A device signs in once with a one-time pairing link, wh
 - Run the service action "Generate pairing link" and open the link from the task log.
 - Or run `t3-pairing-link` in the container's web terminal.
 
-The link uses `WODBY_PRIMARY_URL`, so it points at the environment's main domain. `t3 serve` also prints a pairing link in the container log at each start, but with the pod's internal address: use its token, not its address. List and revoke signed-in devices with `t3 auth session list` and `t3 auth session revoke <id>`.
+The link uses `PUBLIC_URL`, which this service sets to the main domain when it deploys, so deploy the service after changing that domain. Without a main domain, you get only a token: enter it on T3 Code's sign-in page. `t3 serve` also prints a pairing link in the container log at each start, but with the pod's internal address: use its token, not its address. List and revoke signed-in devices with `t3 auth session list` and `t3 auth session revoke <id>`.
 
 ## Agents
 
