@@ -8,7 +8,7 @@ scalable: false
 
 options:
 - version: '0'
-  tag: 0-r2
+  tag: 0-r3
   default: true
 
 labels:
@@ -40,6 +40,9 @@ env:
   value: '3773'
 - name: T3CODE_TELEMETRY_ENABLED
   value: 'false'
+# The address in the links from t3-pairing-link.
+- name: PUBLIC_URL
+  value: '{{service.primaryURL}}'
 
 actions:
 - name: pairing_link
