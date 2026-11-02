@@ -27,9 +27,8 @@ endpoints:
     main: true
     routeDefaults:
       https_redirect: 'true'
-      # Attachments are limited to 50 MiB by T3 Code.
-      request_body_size: 64Mi
-      # Agent turns stream over a long-lived WebSocket.
+      # Agent turns stream over a long-lived WebSocket. Don't set request_body_size: it buffers requests in the
+      # gateway, which then refuses WebSocket connections.
       request_timeout: 0s
       backend_request_timeout: 0s
 
