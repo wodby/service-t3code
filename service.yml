@@ -8,7 +8,7 @@ scalable: false
 
 options:
 - version: '0'
-  tag: 0-r3
+  tag: 0-r4
   default: true
 
 labels:
@@ -68,7 +68,7 @@ helm:
   name: wodby
   source: oci://registry-1.docker.io/wodby/stateful
   chart: oci://registry-1.docker.io/wodby/stateful
-  version: 0.2.0
+  version: 0.4.0
   valueMappings:
     replicas: replicaCount
     serviceAccountName: serviceAccount.name
