@@ -139,8 +139,8 @@ workloads:
     image: wodby/t3code
     resources:
       request:
-        cpu: 500
-        memory: 1024
+        cpu: 10
+        memory: 352
       limit:
         cpu: 4000
         memory: 8192
