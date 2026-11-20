@@ -9,6 +9,7 @@ scalable: false
 options:
 - version: '0'
   tag: 0-r7
+  digest: sha256:f339916d469a1837e234da6397ae8e4fdc328898feba0f2a3672edc0e9bcb8a9
   default: true
 
 labels:
