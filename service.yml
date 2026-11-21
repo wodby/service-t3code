@@ -8,8 +8,8 @@ scalable: false
 
 options:
 - version: '0'
-  tag: 0-r7
-  digest: sha256:f339916d469a1837e234da6397ae8e4fdc328898feba0f2a3672edc0e9bcb8a9
+  tag: 0-r8
+  digest: sha256:cd308823ba3abe0b2be0acf5f6c51d650d1fd30da9131f3d4eb23bbd53c48af7
   default: true
 
 labels:
